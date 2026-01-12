@@ -11,34 +11,46 @@ import { RegisterLeadUseCase } from './use-cases/leads/register-lead.use-case';
 import { RegisterNewResidentRequestUseCase } from './use-cases/resident/register-new-resident-request.use-case';
 import { RegisterProviderUseCase } from './use-cases/providers/register-provider.use-case';
 import { RegisterJobApplicationUseCase } from './use-cases/recruiting/register-job-application.use-case';
+import { ManageConversationContextUseCase } from './use-cases/conversation/manage-context.use-case';
+import { ResidentFlowHandler } from './use-cases/messages/handlers/resident-flow.handler';
+import { NonResidentFlowHandler } from './use-cases/messages/handlers/non-resident-flow.handler';
+import { OpenAIValidationService } from './services/openai-validation.service';
 
 @Module({
-    imports: [RepositoriesModule],
-    providers: [
-        ValidateResidentUseCase,
-        HandleIncomingMessageUseCase,
-        GetBuildingPaymentInfoUseCase,
-        GetResidentReceiptsUseCase,
-        RegisterClaimUseCase,
-        GetBuildingDocumentsUseCase,
-        UpdateResidentProfileUseCase,
-        RegisterLeadUseCase,
-        RegisterNewResidentRequestUseCase,
-        RegisterProviderUseCase,
-        RegisterJobApplicationUseCase,
-    ],
-    exports: [
-        ValidateResidentUseCase,
-        HandleIncomingMessageUseCase,
-        GetBuildingPaymentInfoUseCase,
-        GetResidentReceiptsUseCase,
-        RegisterClaimUseCase,
-        GetBuildingDocumentsUseCase,
-        UpdateResidentProfileUseCase,
-        RegisterLeadUseCase,
-        RegisterNewResidentRequestUseCase,
-        RegisterProviderUseCase,
-        RegisterJobApplicationUseCase,
-    ],
+  imports: [RepositoriesModule],
+  providers: [
+    ValidateResidentUseCase,
+    HandleIncomingMessageUseCase,
+    GetBuildingPaymentInfoUseCase,
+    GetResidentReceiptsUseCase,
+    RegisterClaimUseCase,
+    GetBuildingDocumentsUseCase,
+    UpdateResidentProfileUseCase,
+    RegisterLeadUseCase,
+    RegisterNewResidentRequestUseCase,
+    RegisterProviderUseCase,
+    RegisterJobApplicationUseCase,
+    ManageConversationContextUseCase,
+    ResidentFlowHandler,
+    NonResidentFlowHandler,
+    OpenAIValidationService,
+  ],
+  exports: [
+    ValidateResidentUseCase,
+    HandleIncomingMessageUseCase,
+    GetBuildingPaymentInfoUseCase,
+    GetResidentReceiptsUseCase,
+    RegisterClaimUseCase,
+    GetBuildingDocumentsUseCase,
+    UpdateResidentProfileUseCase,
+    RegisterLeadUseCase,
+    RegisterNewResidentRequestUseCase,
+    RegisterProviderUseCase,
+    RegisterJobApplicationUseCase,
+    ManageConversationContextUseCase,
+    ResidentFlowHandler,
+    NonResidentFlowHandler,
+    OpenAIValidationService,
+  ],
 })
 export class ApplicationModule { }

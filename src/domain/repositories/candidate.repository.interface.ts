@@ -1,5 +1,5 @@
 import { Candidate } from '../entities/candidate.entity';
 
 export interface ICandidateRepository {
-    save(candidate: Candidate): Promise<void>;
+  save(candidate: Candidate): Promise<void>;
 }

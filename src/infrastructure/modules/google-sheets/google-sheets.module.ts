@@ -3,8 +3,8 @@ import { GoogleSheetsService } from './google-sheets.service';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-    imports: [ConfigModule],
-    providers: [GoogleSheetsService],
-    exports: [GoogleSheetsService],
+  imports: [ConfigModule],
+  providers: [GoogleSheetsService],
+  exports: [GoogleSheetsService],
 })
-export class GoogleSheetsModule { }
+export class GoogleSheetsModule {}

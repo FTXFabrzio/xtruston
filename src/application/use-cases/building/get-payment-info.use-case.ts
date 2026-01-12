@@ -3,14 +3,22 @@ import { IBuildingRepository } from '../../../domain/repositories/building.repos
 
 @Injectable()
 export class GetBuildingPaymentInfoUseCase {
-    constructor(
-        @Inject('IBuildingRepository')
-        private readonly buildingRepository: IBuildingRepository,
-    ) { }
+  constructor(
+    @Inject('IBuildingRepository')
+    private readonly buildingRepository: IBuildingRepository,
+  ) { }
 
-    async execute(buildingCode: string): Promise<string[]> {
-        const building = await this.buildingRepository.findByCode(buildingCode);
-        if (!building) return [];
-        return building.paymentMethods;
-    }
+  async execute(buildingCode: string): Promise<string[]> {
+    const building = await this.buildingRepository.findByCode(buildingCode);
+    if (!building) return [];
+
+    // Return payment information from the new structure
+    const paymentInfo: string[] = [];
+    if (building.account) paymentInfo.push(`Cuenta: ${building.account}`);
+    if (building.cci) paymentInfo.push(`CCI: ${building.cci}`);
+    if (building.bank) paymentInfo.push(`Banco: ${building.bank}`);
+    if (building.accountName) paymentInfo.push(`Titular: ${building.accountName}`);
+
+    return paymentInfo;
+  }
 }

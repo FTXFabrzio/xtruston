@@ -4,23 +4,23 @@ import { Lead } from '../../../domain/entities/lead.entity';
 
 @Injectable()
 export class RegisterLeadUseCase {
-    constructor(
-        @Inject('ILeadRepository')
-        private readonly leadRepository: ILeadRepository,
-    ) { }
+  constructor(
+    @Inject('ILeadRepository')
+    private readonly leadRepository: ILeadRepository,
+  ) {}
 
-    async execute(dto: any): Promise<void> {
-        const lead = new Lead(
-            '',
-            dto.buildingName,
-            dto.units,
-            dto.address,
-            dto.district,
-            dto.contactName,
-            dto.email,
-            dto.phoneNumber,
-            new Date()
-        );
-        await this.leadRepository.save(lead);
-    }
+  async execute(dto: any): Promise<void> {
+    const lead = new Lead(
+      '',
+      dto.buildingName,
+      dto.units,
+      dto.address,
+      dto.district,
+      dto.contactName,
+      dto.email,
+      dto.phoneNumber,
+      new Date(),
+    );
+    await this.leadRepository.save(lead);
+  }
 }

@@ -1,0 +1,39 @@
+{
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "1423498916072306",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "15551845224",
+                            "phone_number_id": "987374274450874"
+                        },
+                        "contacts": [
+                            {
+                                "profile": {
+                                    "name": "Fabrizio Diaz"
+                                },
+                                "wa_id": "51979488967"
+                            }
+                        ],
+                        "messages": [
+                            {
+                                "from": "51979488967",
+                                "id": "wamid.HBgLNTE5Nzk0ODg5NjcVAgASGCBBQzY5MDI1OTY4NEVENUUwQTI1RkE5RUZBMTYyM0MzMwA=",
+                                "timestamp": "1768183978",
+                                "text": {
+                                    "body": "Hola"
+                                },
+                                "type": "text"
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}

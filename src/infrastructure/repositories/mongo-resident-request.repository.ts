@@ -7,37 +7,41 @@ import { ResidentRequestDocument } from '../database/schemas/resident-request.sc
 
 @Injectable()
 export class MongoResidentRequestRepository implements IResidentRequestRepository {
-    constructor(
-        @InjectModel(ResidentRequestDocument.name) private requestModel: Model<ResidentRequestDocument>,
-    ) { }
+  constructor(
+    @InjectModel(ResidentRequestDocument.name)
+    private requestModel: Model<ResidentRequestDocument>,
+  ) {}
 
-    async save(request: ResidentRequest): Promise<void> {
-        const doc = new this.requestModel({
-            phoneNumber: request.phoneNumber,
-            buildingCode: request.buildingCode,
-            unit: request.unit,
-            name: request.name,
-            status: request.status,
-        });
-        // Upsert logic might be better if re-requesting
-        await this.requestModel.findOneAndUpdate(
-            { phoneNumber: request.phoneNumber },
-            doc,
-            { upsert: true, new: true }
-        ).exec();
-    }
+  async save(request: ResidentRequest): Promise<void> {
+    const doc = new this.requestModel({
+      phoneNumber: request.phoneNumber,
+      buildingCode: request.buildingCode,
+      unit: request.unit,
+      name: request.name,
+      status: request.status,
+    });
+    // Upsert logic might be better if re-requesting
+    await this.requestModel
+      .findOneAndUpdate({ phoneNumber: request.phoneNumber }, doc, {
+        upsert: true,
+        new: true,
+      })
+      .exec();
+  }
 
-    async findByPhoneNumber(phoneNumber: string): Promise<ResidentRequest | null> {
-        const doc = await this.requestModel.findOne({ phoneNumber }).exec();
-        if (!doc) return null;
-        return new ResidentRequest(
-            doc._id.toString(),
-            doc.phoneNumber,
-            doc.buildingCode,
-            doc.unit,
-            doc.name,
-            doc.status as any,
-            (doc as any).createdAt || new Date()
-        );
-    }
+  async findByPhoneNumber(
+    phoneNumber: string,
+  ): Promise<ResidentRequest | null> {
+    const doc = await this.requestModel.findOne({ phoneNumber }).exec();
+    if (!doc) return null;
+    return new ResidentRequest(
+      doc._id.toString(),
+      doc.phoneNumber,
+      doc.buildingCode,
+      doc.unit,
+      doc.name,
+      doc.status as any,
+      (doc as any).createdAt || new Date(),
+    );
+  }
 }

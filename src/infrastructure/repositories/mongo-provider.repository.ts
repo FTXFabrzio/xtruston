@@ -7,20 +7,21 @@ import { ProviderDocument } from '../database/schemas/provider.schema';
 
 @Injectable()
 export class MongoProviderRepository implements IProviderRepository {
-    constructor(
-        @InjectModel(ProviderDocument.name) private providerModel: Model<ProviderDocument>,
-    ) { }
+  constructor(
+    @InjectModel(ProviderDocument.name)
+    private providerModel: Model<ProviderDocument>,
+  ) {}
 
-    async save(provider: Provider): Promise<void> {
-        const doc = new this.providerModel({
-            companyName: provider.companyName,
-            ruc: provider.ruc,
-            contactName: provider.contactName,
-            address: provider.address,
-            type: provider.type,
-            specialties: provider.specialties,
-            phoneNumber: provider.phoneNumber,
-        });
-        await doc.save();
-    }
+  async save(provider: Provider): Promise<void> {
+    const doc = new this.providerModel({
+      companyName: provider.companyName,
+      ruc: provider.ruc,
+      contactName: provider.contactName,
+      address: provider.address,
+      type: provider.type,
+      specialties: provider.specialties,
+      phoneNumber: provider.phoneNumber,
+    });
+    await doc.save();
+  }
 }

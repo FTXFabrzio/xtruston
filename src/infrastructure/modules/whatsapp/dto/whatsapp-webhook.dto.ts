@@ -3,6 +3,7 @@ export type WhatsappWebhookDto = {
     changes: Array<{
       value: {
         messages?: Array<{
+          id: string;
           from: string;
           timestamp: string;
           type: 'text' | 'interactive' | string;

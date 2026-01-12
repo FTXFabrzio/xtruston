@@ -2,9 +2,17 @@ import type { WhatsappWebhookDto } from './dto/whatsapp-webhook.dto';
 import type { IncomingMessageDto } from 'src/application/dto/messages/incoming-message.dto';
 
 export class WhatsappMapper {
-  static toIncomingMessage(payload: WhatsappWebhookDto): IncomingMessageDto | null {
+  static toIncomingMessage(
+    payload: WhatsappWebhookDto,
+  ): IncomingMessageDto | null {
     const msg = payload.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
     if (!msg) return null;
+
+    // Normalizar 'from': Eliminar prefijo 51 si tiene 11 dígitos
+    let from = msg.from;
+    if (from.startsWith('51') && from.length > 9) {
+      from = from.substring(2);
+    }
 
     const timestamp = Number(msg.timestamp);
 
@@ -15,7 +23,7 @@ export class WhatsappMapper {
 
       return {
         channel: 'whatsapp',
-        from: msg.from,
+        from,
         timestamp,
         kind: 'text',
         text,
@@ -29,7 +37,7 @@ export class WhatsappMapper {
       if (interactiveType === 'list_reply' && msg.interactive.list_reply) {
         return {
           channel: 'whatsapp',
-          from: msg.from,
+          from,
           timestamp,
           kind: 'list_reply',
           actionId: msg.interactive.list_reply.id,
@@ -40,7 +48,7 @@ export class WhatsappMapper {
       if (interactiveType === 'button_reply' && msg.interactive.button_reply) {
         return {
           channel: 'whatsapp',
-          from: msg.from,
+          from,
           timestamp,
           kind: 'button_reply',
           actionId: msg.interactive.button_reply.id,

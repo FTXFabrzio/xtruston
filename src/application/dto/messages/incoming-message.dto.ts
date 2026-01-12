@@ -7,7 +7,7 @@ export interface IncomingMessageDto {
 
   kind: IncomingMessageKind;
 
-  text?: string;          // kind=text
-  actionId?: string;      // kind=list_reply | button_reply
-  actionTitle?: string;   // opcional (logs)
+  text?: string; // kind=text
+  actionId?: string; // kind=list_reply | button_reply
+  actionTitle?: string; // opcional (logs)
 }

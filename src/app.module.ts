@@ -4,15 +4,14 @@ import { WhatsappModule } from './infrastructure/modules/whatsapp/whatsapp.modul
 import { RepositoriesModule } from './infrastructure/repositories/repositories.module';
 import { ApplicationModule } from './application/application.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     RepositoriesModule,
     ApplicationModule,
-    WhatsappModule
+    WhatsappModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

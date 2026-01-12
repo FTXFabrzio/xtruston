@@ -1,5 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ValidateResidentUseCase } from '../resident/validate-resident.use-case';
+import { ManageConversationContextUseCase } from '../conversation/manage-context.use-case';
+import { ResidentFlowHandler } from './handlers/resident-flow.handler';
+import { NonResidentFlowHandler } from './handlers/non-resident-flow.handler';
+import { WhatsappResponseHelper } from '../../utils/whatsapp-response.helper';
 
 @Injectable()
 export class HandleIncomingMessageUseCase {
@@ -7,48 +11,60 @@ export class HandleIncomingMessageUseCase {
 
   constructor(
     private readonly validateResident: ValidateResidentUseCase,
+    private readonly manageContext: ManageConversationContextUseCase,
+    private readonly residentHandler: ResidentFlowHandler,
+    private readonly nonResidentHandler: NonResidentFlowHandler,
   ) { }
 
   async execute(message: any): Promise<any> {
-    const { from, body } = message; // Simplified message structure
-    this.logger.log(`Processing message from ${from}: ${body}`);
+    const from = message.from;
+    const text = (message.text || message.actionTitle || '').trim();
+    this.logger.log(`Processing message from ${from}: ${text}`);
 
-    // 1. Validate Resident
-    const resident = await this.validateResident.execute(from);
+    try {
+      // 1. Get or create session
+      const session = await this.manageContext.getOrCreateSession(from);
 
-    if (!resident) {
-      // Non-resident flow
-      this.logger.log(`User ${from} not found in resident list.`);
-      return { type: 'NON_RESIDENT_MENU' };
+      // 2. Validate Resident
+      const resident = await this.validateResident.execute(from);
+
+      if (!resident) {
+        // Non-resident flow
+        this.logger.log(`User ${from} mapping to NonResidentFlowHandler`);
+        return this.nonResidentHandler.handle(message, session);
+      }
+
+      this.logger.log(
+        `User ${from} identified as resident: ${resident.name} (${resident.status})`,
+      );
+
+      // 3. Check Status
+      if (resident.status === 'EN REVISION') {
+        return WhatsappResponseHelper.text(
+          from,
+          `¡Hola ${resident.name}! 🕒 Aún estamos esperando la confirmación de tu administrador para activar tu cuenta. Te avisaré por aquí apenas esté listo. ¡Gracias por tu paciencia! ✨`
+        );
+      }
+
+      if (resident.status === 'ANULADO' || resident.status === 'RECHAZADO') {
+        return WhatsappResponseHelper.text(
+          from,
+          `Lo siento ${resident.name}, luego de consultar con el administrador hemos anulado o rechazado tu solicitud. Por favor, comunícate con él para más detalles. ✋`
+        );
+      }
+
+      if (resident.status === 'ACTIVO') {
+        return this.residentHandler.handle(message, resident, session);
+      }
+
+      return WhatsappResponseHelper.text(from, 'Lo siento, hubo un error al procesar tu mensaje.');
+    } catch (error) {
+      this.logger.error(`Error processing message from ${from}:`, error.stack);
+      // Return a friendly error message to the user
+      return WhatsappResponseHelper.text(
+        from,
+        '⚠️ Lo siento, estamos experimentando problemas técnicos. Por favor, intenta nuevamente en unos minutos.'
+      );
     }
-
-    this.logger.log(`User ${from} identified as resident: ${resident.name} (${resident.status})`);
-
-    // 2. Check Status
-    if (resident.status === 'EN REVISION') {
-      return {
-        type: 'TEXT',
-        content: `¡Hola! 🕒 Aún estamos esperando la confirmación de tu administrador para activar tu cuenta. Te avisaré por aquí apenas esté listo. ¡Gracias por tu paciencia! ✨`
-      };
-    }
-
-    if (resident.status === 'ANULADO' || resident.status === 'RECHAZADO') {
-      return {
-        type: 'TEXT',
-        content: `Lo siento, luego de consultar con el administrador hemos anulado tu solicitud. Por favor, comunícate con él para más detalles. ✋`
-      };
-    }
-
-    if (resident.status === 'APROBADO') {
-      // 3. Show Resident Menu (7 options)
-      return {
-        type: 'RESIDENT_MENU',
-        residentName: resident.name,
-        building: resident.buildingCode, // Should lookup building details
-        unit: resident.departmentUnit
-      };
-    }
-
-    return { type: 'UNKNOWN_STATE' };
   }
 }
